@@ -1,0 +1,9 @@
+# Reference: https://build-cpp.github.io/cmkr/cmake-toml
+[project]
+name = "tether"
+
+[target.tether]
+type = "executable" # static, shared
+sources = ["src/**.cpp", "inc/**.hpp", "src/**.c", "inc/**.h"]
+include-directories = ["inc"]
+compile-features = ["cxx_std_20"]
