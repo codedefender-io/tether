@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <stdio.h>
 
-#define MAX_CLIENTS 32
+#define MAX_CLIENTS 512
 
 struct __tether_packet {
   struct __grps {
@@ -221,26 +221,9 @@ int main(int argc, const char** argv) {
     while (enet_host_service(server, &event, 0) > 0) {
       switch (event.type) {
         case ENET_EVENT_TYPE_CONNECT:
-          printf("A new client connected from %x:%u.\n",
-                 event.peer->address.host, event.peer->address.port);
           break;
         case ENET_EVENT_TYPE_RECEIVE: {
           auto pckt = reinterpret_cast<__tether_packet*>(event.packet->data);
-          printf("==== TETHER PACKET ====\n");
-          printf(" RAX: %016llX   RBX: %016llX   RCX: %016llX   RDX: %016llX\n",
-                 pckt->grps.rax, pckt->grps.rbx, pckt->grps.rcx,
-                 pckt->grps.rdx);
-          printf("  R8: %016llX    R9: %016llX   R10: %016llX   R11: %016llX\n",
-                 pckt->grps.r8, pckt->grps.r9, pckt->grps.r10, pckt->grps.r11);
-          printf(" R12: %016llX   R13: %016llX   R14: %016llX   R15: %016llX\n",
-                 pckt->grps.r12, pckt->grps.r13, pckt->grps.r14,
-                 pckt->grps.r15);
-          printf(
-              " RBP: %016llX   RSI: %016llX   RDI: %016llX   \n\nRFLAGS: "
-              "%016llX\n",
-              pckt->grps.rbp, pckt->grps.rsi, pckt->grps.rdi, pckt->rflags);
-          printf("------------------------\n");
-          printf("TOKEN: %016llX\n", pckt->token);
 
           // Execute the tether handler now.
           execute_tether_region(pckt->token, pckt, __tether_regions);
@@ -254,13 +237,10 @@ int main(int argc, const char** argv) {
             enet_packet_destroy(packet);
           }
 
-          enet_peer_disconnect(event.peer, 0);
           enet_packet_destroy(event.packet);
           break;
         }
         case ENET_EVENT_TYPE_DISCONNECT:
-          printf("Client %x:%u disconnected.\n", event.peer->address.host,
-                 event.peer->address.port);
           break;
         case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
           printf("Client %x:%u timeout!\n", event.peer->address.host,
