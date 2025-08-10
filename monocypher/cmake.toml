@@ -1,0 +1,7 @@
+[project]
+name = "monocypher"
+
+[target.monocypher]
+type = "static"
+sources = ["src/**.c", "inc/**.h"]
+include-directories = ["inc"]

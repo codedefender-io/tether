@@ -24,34 +24,22 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS cmake.toml)
 endif()
 
-project(tether)
+project(monocypher)
 
-# Subdirectory: monocypher
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/monocypher")
-else()
-	set(CMAKE_FOLDER monocypher)
-endif()
-add_subdirectory(monocypher)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+# Target: monocypher
+set(monocypher_SOURCES
+	cmake.toml
+	"inc/monocypher-ed25519.h"
+	"inc/monocypher.h"
+	"src/monocypher-ed25519.c"
+	"src/monocypher.c"
+)
 
-# Subdirectory: server
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/server")
-else()
-	set(CMAKE_FOLDER server)
-endif()
-add_subdirectory(server)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+add_library(monocypher STATIC)
 
-# Subdirectory: keygen
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/keygen")
-else()
-	set(CMAKE_FOLDER keygen)
-endif()
-add_subdirectory(keygen)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+target_sources(monocypher PRIVATE ${monocypher_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${monocypher_SOURCES})
+
+target_include_directories(monocypher PUBLIC
+	inc
+)

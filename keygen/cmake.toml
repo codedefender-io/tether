@@ -1,0 +1,7 @@
+[project]
+name = "keygen"
+
+[target.keygen]
+type = "executable"
+sources = ["src/**.cpp"]
+link-libraries = ["monocypher"]

@@ -24,34 +24,40 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS cmake.toml)
 endif()
 
-project(tether)
+project(server)
 
-# Subdirectory: monocypher
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/monocypher")
-else()
-	set(CMAKE_FOLDER monocypher)
-endif()
-add_subdirectory(monocypher)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+# Target: server
+set(server_SOURCES
+	cmake.toml
+	"inc/cargs.h"
+	"inc/cli.hpp"
+	"inc/enet.h"
+	"inc/exec.hpp"
+	"inc/init.hpp"
+	"inc/sanitizer.hpp"
+	"inc/server.hpp"
+	"inc/tether.hpp"
+	"src/cli.cpp"
+	"src/init.cpp"
+	"src/main.cpp"
+	"src/sanitizer.cpp"
+	"src/server.cpp"
+)
 
-# Subdirectory: server
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/server")
-else()
-	set(CMAKE_FOLDER server)
-endif()
-add_subdirectory(server)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+add_executable(server)
 
-# Subdirectory: keygen
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/keygen")
-else()
-	set(CMAKE_FOLDER keygen)
+target_sources(server PRIVATE ${server_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${server_SOURCES})
+
+target_compile_features(server PRIVATE
+	cxx_std_20
+)
+
+target_include_directories(server PRIVATE
+	inc
+)
+
+get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)
+if(NOT CMKR_VS_STARTUP_PROJECT)
+	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT server)
 endif()
-add_subdirectory(keygen)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
