@@ -3,13 +3,13 @@
 void print_help(void) {
   printf("Tether Server\n");
   printf("Usage:\n");
-  printf("  tether_server [OPTIONS]\n\n");
+  printf("  server [OPTIONS]\n\n");
   printf("Options:\n");
   printf("  -h, --host HOST        Host address to bind (default: 0.0.0.0)\n");
   printf("  -p, --port PORT        Port number to bind (default: 1234)\n");
   printf(
       "  -c, --max-clients      Max number of connections the server supports "
-      "at once\n");
+      "at once (default 128)\n");
   printf("      --pubkey FILE      Path to public key file (required)\n");
   printf("      --privkey FILE     Path to private key file (required)\n");
   printf("      --tether FILE      Path to tether file (required)\n");
@@ -57,6 +57,7 @@ bool parse_args(int argc, char** argv, cli_args_t* args) {
   // Defaults
   args->host = "0.0.0.0";
   args->port = 1234;
+  args->max_clients = 128;
   args->pubkey = NULL;
   args->privkey = NULL;
   args->tether = NULL;

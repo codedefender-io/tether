@@ -31,16 +31,16 @@ set(server_SOURCES
 	cmake.toml
 	"inc/cargs.h"
 	"inc/cli.hpp"
+	"inc/eflags.hpp"
 	"inc/enet.h"
 	"inc/exec.hpp"
 	"inc/init.hpp"
-	"inc/sanitizer.hpp"
 	"inc/server.hpp"
 	"inc/tether.hpp"
+	"src/cargs.c"
 	"src/cli.cpp"
 	"src/init.cpp"
 	"src/main.cpp"
-	"src/sanitizer.cpp"
 	"src/server.cpp"
 )
 
@@ -55,6 +55,10 @@ target_compile_features(server PRIVATE
 
 target_include_directories(server PRIVATE
 	inc
+)
+
+target_link_libraries(server PRIVATE
+	monocypher
 )
 
 get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)

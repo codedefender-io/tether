@@ -1,22 +1,14 @@
-#include <Windows.h>
-
 #include <init.hpp>
-#include <fstream>
-#include <vector>
-#include <format>
-#include <iostream>
 
-#include <tether.hpp>
-
-void init_tether_regions(const std::string& file_path) {
+void init_tether_regions(const char* file_path) {
   std::ifstream file(file_path, std::ios::binary);
   if (!file) {
-    std::cerr << std::format("Failed to open file: {}\n", file_path);
+    std::cerr << "Failed to open file: " << file_path << "\n";
     return;
   }
 
   // Read all data into buffer
-  std::vector<std::byte> buffer(std::istreambuf_iterator<char>(file), {});
+  std::vector<char> buffer(std::istreambuf_iterator<char>(file), {});
   if (buffer.empty()) {
     std::cerr << "File is empty or failed to read.\n";
     return;
@@ -33,6 +25,8 @@ void init_tether_regions(const std::string& file_path) {
     return;
   }
 
+  // If/when adding linux support to this server, need to rewrite this.
+  // https://music.youtube.com/watch?v=2uJ7hsdEocg
   for (unsigned i = 0; i < regions; i++) {
     uint32_t token = *cursor++;
     uint32_t inst_buffer_len = *cursor++;
@@ -50,10 +44,6 @@ void init_tether_regions(const std::string& file_path) {
 
     DWORD old;
     VirtualProtect(insts, inst_buffer_len + 1, PAGE_EXECUTE, &old);
-
-    std::cout << std::format(
-        "Token: {}, instruction buffer size: {}, ptr = {}\n", token,
-        inst_buffer_len, static_cast<void*>(insts));
 
     __tether_regions[i] = reinterpret_cast<fn_tether_region>(insts);
     cursor = reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(cursor) +

@@ -1,8 +1,10 @@
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
+
 #define ENET_IMPLEMENTATION
 #include <enet.h>
-
-#include <Windows.h>
 #include <bit>
 #include <cstdint>
 #include <format>
@@ -14,8 +16,28 @@
 #include <vector>
 
 #include <cli.hpp>
-#include <tether.hpp>
 #include <server.hpp>
+#include <tether.hpp>
+
+std::vector<uint8_t> readbytes(const std::string& filename) {
+  std::ifstream file(filename, std::ios::binary | std::ios::ate);
+  if (!file) {
+    return {};
+  }
+
+  std::streamsize size = file.tellg();
+  if (size <= 0) {
+    return {};
+  }
+  file.seekg(0, std::ios::beg);
+
+  std::vector<uint8_t> buffer(static_cast<size_t>(size));
+  if (!file.read(reinterpret_cast<char*>(buffer.data()), size)) {
+    return {};
+  }
+
+  return buffer;
+}
 
 int main(int argc, char** argv) {
   cli_args_t args;
@@ -53,8 +75,10 @@ int main(int argc, char** argv) {
   }
 
   std::cout << "Started a Tether server...\n";
-  TetherServer server(host);
-  server.serve(); // Blocking call.
+  auto priv = readbytes(args.privkey);
+  auto pub = readbytes(args.pubkey);
+  TetherServer server(host, priv, pub);
+  server.serve();  // Blocking call.
 
   enet_deinitialize();
   return 0;

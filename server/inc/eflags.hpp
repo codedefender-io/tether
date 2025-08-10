@@ -2,8 +2,6 @@
 #include <Windows.h>
 #include <tether.hpp>
 
-void sanitize(__tether_packet* pckt);
-
 /**
  * The 32-bit EFLAGS register contains a group of status flags, a control flag,
  * and a group of system flags. The status flags (bits 0, 2, 4, 6, 7, and 11) of
@@ -253,3 +251,25 @@ typedef union {
 
   UINT32 AsUInt;
 } EFLAGS;
+
+// Probably only need to do this once. When looking for code to optimize
+// consider executing this only once and caching the system eflags result.
+__declspec(naked) EFLAGS __get_system_flags() {
+  __asm {
+	PUSHFQ
+	MOV EAX, [RSP]
+	ADD RSP, 8  // Faster than POPFQ
+	RET
+  }
+}
+
+__forceinline void sanitize_eflags(__tether_registers* pckt) {
+  auto eflags = reinterpret_cast<EFLAGS*>(pckt->rflags);
+  auto current_system_flags = __get_system_flags();
+  current_system_flags.SignFlag = eflags->SignFlag;
+  current_system_flags.OverflowFlag = eflags->OverflowFlag;
+  current_system_flags.ParityFlag = eflags->ParityFlag;
+  current_system_flags.ZeroFlag = eflags->ZeroFlag;
+  current_system_flags.CarryFlag = eflags->CarryFlag;
+  *reinterpret_cast<EFLAGS*>(pckt->rflags) = current_system_flags;
+}

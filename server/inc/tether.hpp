@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-struct __tether_packet {
+struct __tether_registers {
   struct __grps {
     uint64_t r15;
     uint64_t r14;
@@ -23,5 +23,5 @@ struct __tether_packet {
   uint64_t token;
 };
 
-using fn_tether_region = void (*)(unsigned, __tether_packet*);
+using fn_tether_region = void (*)(unsigned, __tether_registers*);
 extern "C" inline fn_tether_region* __tether_regions = nullptr;

@@ -4,9 +4,9 @@
 // This will only compile for clang/maybe gcc compiler.
 // Im using LLVM-MSVC to create this project, maybe this will become a const array
 // of bytes in the future so that we dont have compiler issues.
-extern "C" __declspec(naked) void execute_tether_region(
+extern "C" __declspec(naked) void __execute_tether_region(
     unsigned token,
-    __tether_packet* pckt,
+    __tether_registers* pckt,
     fn_tether_region* handlers) {
   __asm {
     .seh_proc FUNC

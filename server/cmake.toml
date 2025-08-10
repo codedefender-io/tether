@@ -7,3 +7,4 @@ type = "executable"
 sources = ["src/**.cpp", "inc/**.hpp", "src/**.c", "inc/**.h"]
 include-directories = ["inc"]
 compile-features = ["cxx_std_20"]
+link-libraries = ["monocypher"]
