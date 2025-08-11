@@ -1,0 +1,21 @@
+[project]
+name = "server"
+
+[target.server]
+type = "executable"
+sources = ["src/**.cpp", "inc/**.hpp", "src/**.c", "inc/**.h"]
+include-directories = ["inc"]
+compile-features = ["cxx_std_20"]
+link-libraries = ["monocypher", "spdlog"]
+
+cmake-before = """
+include(FetchContent)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG        v1.15.3
+)
+
+# Make the spdlog target available
+FetchContent_MakeAvailable(spdlog)
+"""

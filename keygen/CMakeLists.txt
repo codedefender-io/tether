@@ -24,34 +24,24 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS cmake.toml)
 endif()
 
-project(tether)
+project(keygen)
 
-# Subdirectory: monocypher
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/monocypher")
-else()
-	set(CMAKE_FOLDER monocypher)
-endif()
-add_subdirectory(monocypher)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+# Target: keygen
+set(keygen_SOURCES
+	cmake.toml
+	"src/main.cpp"
+)
 
-# Subdirectory: server
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/server")
-else()
-	set(CMAKE_FOLDER server)
-endif()
-add_subdirectory(server)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+add_executable(keygen)
 
-# Subdirectory: keygen
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/keygen")
-else()
-	set(CMAKE_FOLDER keygen)
+target_sources(keygen PRIVATE ${keygen_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${keygen_SOURCES})
+
+target_link_libraries(keygen PRIVATE
+	monocypher
+)
+
+get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)
+if(NOT CMKR_VS_STARTUP_PROJECT)
+	set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT keygen)
 endif()
-add_subdirectory(keygen)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
