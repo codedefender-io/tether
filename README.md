@@ -57,6 +57,8 @@ Options:
       --help             Show this help message
 ```
 
+### [Precompiled Example Here](example/)
+
 ## Build Instructions
 
 Currently this codebase will only compile and run on Windows as there are a handful of API's that are Windows specific. If there is interest in Linux support please open a PR.
