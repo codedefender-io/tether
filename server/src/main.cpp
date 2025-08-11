@@ -74,9 +74,15 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  std::vector<uint8_t> priv = readbytes(args.privkey);
+  std::vector<uint8_t> pub = readbytes(args.pubkey);
+  printf("Public Key: ");
+  for (uint8_t c : pub) {
+    printf("%02x", c);
+  }
+  printf("\n");
+
   spdlog::info("Starting a Tether server on: {}:{}\n", args.host, args.port);
-  auto priv = readbytes(args.privkey);
-  auto pub = readbytes(args.pubkey);
   TetherServer server(host, priv, pub);
   server.serve();  // Blocking call.
 
