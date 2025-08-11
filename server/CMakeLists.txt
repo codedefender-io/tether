@@ -27,6 +27,17 @@ endif()
 project(server)
 
 # Target: server
+set(CMKR_TARGET server)
+include(FetchContent)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG        v1.15.3
+)
+
+# Make the spdlog target available
+FetchContent_MakeAvailable(spdlog)
+
 set(server_SOURCES
 	cmake.toml
 	"inc/cargs.h"
@@ -59,6 +70,7 @@ target_include_directories(server PRIVATE
 
 target_link_libraries(server PRIVATE
 	monocypher
+	spdlog
 )
 
 get_directory_property(CMKR_VS_STARTUP_PROJECT DIRECTORY ${PROJECT_SOURCE_DIR} DEFINITION VS_STARTUP_PROJECT)

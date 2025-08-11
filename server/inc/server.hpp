@@ -7,6 +7,7 @@
 #include <bcrypt.h>
 #include <vector>
 
+#include <spdlog/spdlog.h>
 #include "eflags.hpp"
 #include "enet.h"
 #include "exec.hpp"
@@ -15,7 +16,7 @@
 #include "monocypher.h"
 #include "tether.hpp"
 
-#define VERSION 0x00000001
+#define TETHER_VERSION 0x00000001
 
 constexpr size_t NONCE_SIZE = 24;
 constexpr size_t MAC_SIZE = 16;
@@ -32,6 +33,10 @@ enum TetherPacketType {
   /// Execute specified tether region using specified register context.
   /// </summary>
   ExecuteTetherRegion,
+  /// <summary>
+  /// A packet from the server containing the new CPU state.
+  /// </summary>
+  CPUStateTransfer,
 };
 
 struct KeyExchangePacket {
@@ -49,10 +54,14 @@ struct KeyExchangePacket {
   uint8_t pub[32];
 };
 
-struct ExecuteRegionPacket {
+#pragma pack(push, 1)
+struct CPUStateTransferPacket {
   TetherPacketType type;
-  __tether_registers regs;
+  uint8_t nonce[NONCE_SIZE];
+  uint8_t ciphertext[regs_size];
+  uint8_t mac[MAC_SIZE];
 };
+#pragma pack(pop)
 
 struct TetherPeer {
   /// <summary>
@@ -73,10 +82,15 @@ class TetherServer {
       : _host(host), _priv(priv), _pub(pub) {}
   ~TetherServer() { enet_host_destroy(_host); }
   void serve();
+
  private:
   void handle_key_exchange(ENetPeer* peer, const KeyExchangePacket* pckt);
   void handle_receive(ENetPeer* peer, ENetPacket* packet);
   void handle_disconnect(ENetPeer* peer);
   void handle_connect(ENetPeer* peer);
+  void handle_state_transfer(ENetPeer* peer, __tether_registers* regs);
+  int handle_region_execution(ENetPeer* peer,
+                              ENetPacket* packet,
+                              __tether_registers* regs);
   static void secure_random(uint8_t* buf, size_t len);
 };

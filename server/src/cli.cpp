@@ -55,7 +55,7 @@ bool parse_args(int argc, char** argv, cli_args_t* args) {
        .description = "Show this help message"}};
 
   // Defaults
-  args->host = "0.0.0.0";
+  args->host = "localhost";
   args->port = 1234;
   args->max_clients = 128;
   args->pubkey = NULL;

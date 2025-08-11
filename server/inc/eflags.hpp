@@ -263,13 +263,22 @@ __declspec(naked) EFLAGS __get_system_flags() {
   }
 }
 
-__forceinline void sanitize_eflags(__tether_registers* pckt) {
-  auto eflags = reinterpret_cast<EFLAGS*>(pckt->rflags);
+/// <summary>
+/// This sanitizes the supplied eflags so that only the status flags are copied from the client.
+/// 
+/// This returns the original clients EFLAGS value.
+/// </summary>
+/// <param name="pckt"></param>
+/// <returns></returns>
+__forceinline EFLAGS sanitize_eflags(__tether_registers* pckt) {
+  auto eflags = reinterpret_cast<EFLAGS*>(&pckt->rflags);
+  EFLAGS result = *eflags;
   auto current_system_flags = __get_system_flags();
   current_system_flags.SignFlag = eflags->SignFlag;
   current_system_flags.OverflowFlag = eflags->OverflowFlag;
   current_system_flags.ParityFlag = eflags->ParityFlag;
   current_system_flags.ZeroFlag = eflags->ZeroFlag;
   current_system_flags.CarryFlag = eflags->CarryFlag;
-  *reinterpret_cast<EFLAGS*>(pckt->rflags) = current_system_flags;
+  *reinterpret_cast<EFLAGS*>(&pckt->rflags) = current_system_flags;
+  return result;
 }

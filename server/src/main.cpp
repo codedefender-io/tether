@@ -62,19 +62,19 @@ int main(int argc, char** argv) {
   }
 
   ENetAddress address{};
-  if (enet_address_get_host_new(&address, (char*)args.host, strlen(args.host)) <
-      0) {
+  address.port = args.port;
+  if (enet_address_set_host(&address, args.host) < 0) {
     std::cerr << "An error occured while creating host address.\n";
     return 1;
   }
 
-  ENetHost* host = enet_host_create(&address, args.max_clients, 2, 0, 0);
+  ENetHost* host = enet_host_create(&address, args.max_clients, 1, 0, 0);
   if (!host) {
     std::cerr << "Failed to create ENet server host.\n";
     return 1;
   }
 
-  std::cout << "Started a Tether server...\n";
+  spdlog::info("Starting a Tether server on: {}:{}\n", args.host, args.port);
   auto priv = readbytes(args.privkey);
   auto pub = readbytes(args.pubkey);
   TetherServer server(host, priv, pub);
