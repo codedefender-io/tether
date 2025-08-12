@@ -11,12 +11,11 @@ extern "C" __declspec(naked) void __execute_tether_region(
   __asm {
     .seh_proc FUNC
     FUNC:
-        PUSHFQ
+        ; Save the __tether_registers* pointer
         PUSH RDX
 
         ; Put the address of the tether handler on top of the stack
-        MOV RCX, [R8+RCX*8]
-        PUSH RCX
+        PUSH [R8+RCX*8]
 
         ; Swap GPR registers
         MOV RAX, RDX
@@ -34,11 +33,8 @@ extern "C" __declspec(naked) void __execute_tether_region(
         XCHG RBX, [RAX+0x58]
         XCHG RDX, [RAX+0x60]
         XCHG RCX, [RAX+0x68]
-
-        ; Load flags
         PUSH [RAX+0x78]
         POPFQ
-
         XCHG RAX, [RAX+0x70]
 
         ; Top of the stack is the tether handler
@@ -70,9 +66,8 @@ extern "C" __declspec(naked) void __execute_tether_region(
         PUSHFQ
         POP QWORD PTR [RAX+0x78]
 
-        POP RCX
-        POP RDX
-        POPFQ
+        ; Cleanup stack
+        ADD RSP, 0x10
         RET
     .seh_endproc
   }

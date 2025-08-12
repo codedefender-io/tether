@@ -23,6 +23,14 @@ For clarity, the Tether server code is completely free and open source, you must
 
 - Tether uses [monocypher](https://monocypher.org/), a very tiny, but powerful crypto library. When a connection is established, there is an exchange of `x25519` public keys. A shared secret is then derived using these key's which is then further hashed via `blake2b` to derive a session key. This session key is then used with `XChaCha20` to encrypt CPU context states. In addition, the client is statically linked with the expected remote servers public key to prevent any man-in-the-middle attacks. This cryptographic handshake is relatively quick to setup and use.
 
+## Usage - Instruction Extraction
+
+The instruction extraction process and embedded Tether client is processed by CodeDefender. Once you have established an account with the proper subscription you can add the following obfuscation pass:
+
+![tether](https://imgur.com/a/bFC9qh9.png)
+
+CodeDefender allows you to to apply obfuscation passes and *then* Tether obfuscated functions if you so wish. This will make deobfuscation a hassle as parts of the obfuscated code will be removed.
+
 ## Usage - Key Generation
 
 The Tether server requires a few files to operate. Firstly, you need a `.tether` file, which contains extracted instructions from a program. You can create these files by signing up to [CodeDefender](https://codedefender.io/) and using the SaaS.
@@ -74,3 +82,9 @@ cmake -B .build -T LLVM-MSVC_v143 -A x64
 cd .build
 cmake --build . --config Release
 ```
+
+### Limitations
+
+- This technique is difficult to scale. 
+- Only certain functions can allow for the extreme overhead of Tether.
+- Depending on what code is Tether'ed, replay attacks are possible.

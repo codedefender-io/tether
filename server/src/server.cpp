@@ -127,7 +127,7 @@ int TetherServer::handle_region_execution(ENetPeer* peer,
 
   int ok = crypto_aead_unlock(reinterpret_cast<uint8_t*>(regs), wire->mac,
                               peer_state->session, wire->nonce, ad, ad_len,
-                              wire->ciphertext, regs_size);
+                              wire->ciphertext, sizeof(__tether_registers));
 
   if (ok != 0) {
     spdlog::critical("Bad MAC for packet! Possible tampering or wrong key.");
@@ -185,27 +185,29 @@ void TetherServer::handle_receive(ENetPeer* peer, ENetPacket* packet) {
 
 void TetherServer::serve() {
   ENetEvent event;
-  while (enet_host_service(_host, &event, 1000) >= 0) {
-    switch (event.type) {
-      case ENET_EVENT_TYPE_CONNECT:
-        if (event.data != TETHER_VERSION) {
+  while (true) {
+    while (enet_host_service(_host, &event, 1000) >= 0) {
+      switch (event.type) {
+        case ENET_EVENT_TYPE_CONNECT:
+          if (event.data != TETHER_VERSION) {
+            handle_disconnect(event.peer);
+          } else {
+            handle_connect(event.peer);
+          }
+          break;
+        case ENET_EVENT_TYPE_RECEIVE:
+          handle_receive(event.peer, event.packet);
+          enet_packet_destroy(event.packet);
+          break;
+
+        case ENET_EVENT_TYPE_DISCONNECT:
+        case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
           handle_disconnect(event.peer);
-        } else {
-          handle_connect(event.peer);
-        }
-        break;
-      case ENET_EVENT_TYPE_RECEIVE:
-        handle_receive(event.peer, event.packet);
-        enet_packet_destroy(event.packet);
-        break;
+          break;
 
-      case ENET_EVENT_TYPE_DISCONNECT:
-      case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
-        handle_disconnect(event.peer);
-        break;
-
-      case ENET_EVENT_TYPE_NONE:
-        break;
+        case ENET_EVENT_TYPE_NONE:
+          break;
+      }
     }
   }
   enet_host_destroy(_host);
