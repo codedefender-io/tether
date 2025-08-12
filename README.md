@@ -27,7 +27,7 @@ For clarity, the Tether server code is completely free and open source, you must
 
 The instruction extraction process and embedded Tether client is processed by [CodeDefender](https://app.codedefender.io/). Once you have established an account with the proper subscription you can add the following obfuscation pass:
 
-![tether](https://imgur.com/a/bFC9qh9.png)
+![tether](https://i.imgur.com/QApMAkl.png)
 
 [CodeDefender](https://app.codedefender.io/) allows you to to apply obfuscation passes and *then* Tether obfuscated functions if you so wish. This will make deobfuscation a hassle as parts of the obfuscated code will be removed.
 
