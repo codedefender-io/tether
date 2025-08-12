@@ -15,7 +15,7 @@ The name "Tether" was decided upon as it reminded us of old [IPhone jailbreak ex
 
 ### Open Source Details
 ---
-For clarity, the Tether server code is completely free and open source, you must host your own Tether servers. [CodeDefender](https://codedefender.io/) is used to extract instructions from the program and statically link the embedded Tether client. The embedded client code is statically linked into a program post-compilation by [CodeDefender](https://codedefender.io/). You are free to fork and manipulate server code as you see fit, however the client code is more closely integrated into our CodeDefender SaaS platform. If you wish to alter the embedded client code, please contact us at `contact@back.engineering`.
+For clarity, the Tether server code is completely free and open source, you must host your own Tether servers. [CodeDefender](https://codedefender.io/) is used to extract instructions from the program and statically link the embedded Tether client. The embedded client code is statically linked into a program post-compilation by [CodeDefender](https://codedefender.io/). You are free to fork and manipulate server code as you see fit, however the client code is more closely integrated into our [CodeDefender SaaS platform](https://app.codedefender.io/). If you wish to alter the embedded client code, please contact us at `contact@back.engineering`.
 
 ### Networking Protocol
 
@@ -25,11 +25,11 @@ For clarity, the Tether server code is completely free and open source, you must
 
 ## Usage - Instruction Extraction
 
-The instruction extraction process and embedded Tether client is processed by CodeDefender. Once you have established an account with the proper subscription you can add the following obfuscation pass:
+The instruction extraction process and embedded Tether client is processed by [CodeDefender](https://app.codedefender.io/). Once you have established an account with the proper subscription you can add the following obfuscation pass:
 
 ![tether](https://imgur.com/a/bFC9qh9.png)
 
-CodeDefender allows you to to apply obfuscation passes and *then* Tether obfuscated functions if you so wish. This will make deobfuscation a hassle as parts of the obfuscated code will be removed.
+[CodeDefender](https://app.codedefender.io/) allows you to to apply obfuscation passes and *then* Tether obfuscated functions if you so wish. This will make deobfuscation a hassle as parts of the obfuscated code will be removed.
 
 ## Usage - Key Generation
 
