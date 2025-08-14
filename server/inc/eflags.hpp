@@ -257,8 +257,7 @@ typedef union {
 __declspec(naked) EFLAGS __get_system_flags() {
   __asm {
 	PUSHFQ
-	MOV EAX, [RSP]
-	ADD RSP, 8  // Faster than POPFQ
+    POP RAX
 	RET
   }
 }
